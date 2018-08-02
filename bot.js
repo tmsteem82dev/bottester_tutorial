@@ -5,13 +5,29 @@ module.exports = function (connector) {
     bot.dialog("/", function (session) {
         switch (session.message.text.toLocaleLowerCase()) {
             case "hiya":
-                session.send(["Good day", "Hello", "Hi", "Hemoglobin"]);
+                session.send(["Good day", "Hello", "Hi"]);
+                break;
+            case "how are you?":
+                session.replaceDialog("/how_are_you");
                 break;
             default:
                 session.send("I don't understand: " + session.message.text);
                 break;
         }
     });
+
+    bot.dialog("/how_are_you", [
+        function (session, args, next) {
+            session.send("I am good.");
+            next();
+        },
+        function (session, result, next) {
+            builder.Prompts.text(session, "How about you?");
+        },
+        function (session, result, next) {
+            session.endConversation("That is good to hear.");
+        }
+    ]);
 
     return bot;
 };
