@@ -25,7 +25,11 @@ module.exports = function (connector) {
             builder.Prompts.text(session, "How about you?");
         },
         function (session, result, next) {
-            session.endConversation("That is good to hear.");
+            if (result.response === "I am fine.") {
+                session.endConversation("That is good to hear.");
+            } else {
+                session.endConversation("I am sorry to hear that.");
+            }
         }
     ]);
 

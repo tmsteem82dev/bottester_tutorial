@@ -36,4 +36,11 @@ describe("BotTester", () => {
             .runTest();
     });
 
+    it("can handle negative how are you?", () => {
+        return new BotTester(bot)
+            .sendMessageToBot("How are you?", "I am good.", "How about you?")
+            .sendMessageToBot("Not good.", "I am sorry to hear that.")
+            .runTest();
+    });
+
 });
