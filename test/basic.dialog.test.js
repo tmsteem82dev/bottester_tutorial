@@ -2,8 +2,12 @@ const {
     BotTester,
     TestConnector
 } = require("bot-tester");
-const MyBot = require('../bot');
+const {
+    expect
+} = require("chai");
+
 const connector = new TestConnector();
+
 
 describe("BotTester", () => {
     let bot;
@@ -12,10 +16,22 @@ describe("BotTester", () => {
     });
 
     for (let i = 0; i < 5; i++) {
-        it("can reply hello", function () {
+        it("can reply hello and set name in userData", function () {
 
-            return new BotTester(bot).sendMessageToBot("Hiya", ["Good day", "Hello", "Hi"])
+            return new BotTester(bot)
+                .checkSession((session => {
+                    expect(session.userData).not.to.be.null;
+                    expect(session.userData.name).to.be.undefined;
+                }))
+                .sendMessageToBot("Hiya", ["Good day", "Hello", "Hi"], "My name is Tobor, what is your name?")
+                .sendMessageToBot("Tim", "Nice to meet you.")
+                .checkSession((session) => {
+                    expect(session.userData).not.to.be.null;
+                    expect(session.userData.name).to.be.equal('Tim');
+                })
+                .sendMessageToBot("Hiya", ["Good day, Tim!", "Hello, Tim!", "Hi, Tim!"])
                 .runTest();
+
         });
     }
 

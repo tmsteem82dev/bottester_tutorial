@@ -5,7 +5,7 @@ module.exports = function (connector) {
     bot.dialog("/", function (session) {
         switch (session.message.text.toLocaleLowerCase()) {
             case "hiya":
-                session.send(["Good day", "Hello", "Hi"]);
+                session.replaceDialog("/greeting");
                 break;
             case "how are you?":
                 session.replaceDialog("/how_are_you");
@@ -15,6 +15,29 @@ module.exports = function (connector) {
                 break;
         }
     });
+
+    bot.dialog("/greeting", [function (session, args, next) {
+
+        let msgs = ["Good day", "Hello", "Hi"]
+
+        if (session.userData.name) {
+            for (let i = 0; i < msgs.length; i++) {
+                msgs[i] = `${msgs[i]}, ${session.userData.name}!`;
+            }
+        }
+        session.send(msgs);
+        next();
+    }, function (session, result, next) {
+        if (session.userData.name) {
+            session.endConversation();
+        } else {
+            builder.Prompts.text(session, "My name is Tobor, what is your name?");
+        }
+
+    }, function (session, result, next) {
+        session.userData.name = result.response;
+        session.endConversation("Nice to meet you.")
+    }]);
 
     bot.dialog("/how_are_you", [
         function (session, args, next) {
