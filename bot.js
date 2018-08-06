@@ -1,4 +1,5 @@
 const builder = require("botbuilder");
+const cardGenerator = require("./cardGenerator");
 module.exports = function (connector) {
     let bot = new builder.UniversalBot(connector)
 
@@ -10,11 +11,23 @@ module.exports = function (connector) {
             case "how are you?":
                 session.replaceDialog("/how_are_you");
                 break;
+            case "what is github?":
+                session.replaceDialog("/what_is_github");
+                break;
             default:
                 session.send("I don't understand: " + session.message.text);
                 break;
         }
     });
+
+    bot.dialog("/what_is_github", [function (session, args, next) {
+        session.send("For information on GitHub look at the card below:");
+        next();
+    }, function (session, result, next) {
+        let cardMSg = cardGenerator.getGitHubCardMessage(); //new builder.Message(session).addAttachment(card);
+        session.send(cardMSg);
+        session.endConversation();
+    }]);
 
     bot.dialog("/greeting", [function (session, args, next) {
 

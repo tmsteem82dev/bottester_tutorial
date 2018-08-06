@@ -7,6 +7,7 @@ const {
 } = require("chai");
 
 const connector = new TestConnector();
+const cardGenerator = require('../cardGenerator');
 
 
 describe("BotTester", () => {
@@ -29,7 +30,7 @@ describe("BotTester", () => {
                     expect(session.userData).not.to.be.null;
                     expect(session.userData.name).to.be.equal('Tim');
                 })
-                .sendMessageToBot("Hiya", ["Good day, Tim!", "Hello, Tim!", "Hi, Tim!"])
+                .sendMessageToBot("Hiya", /[a-zA-Z].*tim/i)
                 .runTest();
 
         });
@@ -56,6 +57,12 @@ describe("BotTester", () => {
         return new BotTester(bot)
             .sendMessageToBot("How are you?", "I am good.", "How about you?")
             .sendMessageToBot("Not good.", "I am sorry to hear that.")
+            .runTest();
+    });
+
+    it("can show an adaptive card", () => {
+        return new BotTester(bot)
+            .sendMessageToBot("What is github?", "For information on GitHub look at the card below:", cardGenerator.getGitHubCardMessage)
             .runTest();
     });
 
